@@ -87,35 +87,17 @@ Route::middleware(['auth', 'verified', 'profile.complete', 'admin'])->prefix('ad
 
 // Agent routes
 Route::middleware(['auth', 'verified', 'profile.complete'])->prefix('agent')->name('agent.')->group(function () {
-    Route::get('/properties', function () {
-        return view('agent.properties');
-    })->name('properties');
-    
-    Route::get('/appointments', function () {
-        return view('agent.appointments');
-    })->name('appointments');
+   
 });
 
 // Landlord routes
 Route::middleware(['auth', 'verified', 'profile.complete'])->prefix('landlord')->name('landlord.')->group(function () {
-    Route::get('/properties', function () {
-        return view('landlord.properties');
-    })->name('properties');
-    
-    Route::get('/tenants', function () {
-        return view('landlord.tenants');
-    })->name('tenants');
+   
 });
 
 // Customer routes
 Route::middleware(['auth', 'verified', 'profile.complete'])->prefix('customer')->name('customer.')->group(function () {
-    Route::get('/favorites', function () {
-        return view('customer.favorites');
-    })->name('favorites');
-    
-    Route::get('/viewings', function () {
-        return view('customer.viewings');
-    })->name('viewings');
+  
 });
 
 
