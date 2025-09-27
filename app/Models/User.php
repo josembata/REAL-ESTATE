@@ -2,15 +2,15 @@
 
 namespace App\Models;
 
- use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Spatie\Permission\Traits\HasRoles; // <-- import trait
 
 class User extends Authenticatable implements MustVerifyEmail
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, HasRoles; // <-- add HasRoles
 
     /**
      * The attributes that are mass assignable.
@@ -27,7 +27,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'gender',
         'bio',
         'status',
-         'role',
+        // remove 'role' once migration is complete
         'profile_complete',
     ];
 
@@ -55,48 +55,38 @@ class User extends Authenticatable implements MustVerifyEmail
         ];
     }
 
-//   uuid generate
-protected static function boot()
-{
-    parent::boot();
+    // Auto-generate uuid
+    protected static function boot()
+    {
+        parent::boot();
 
-    static::creating(function ($model) {
-        if (empty($model->uuid)) {
-            $model->uuid = \Illuminate\Support\Str::uuid()->toString();
-        }
-    });
+        static::creating(function ($model) {
+            if (empty($model->uuid)) {
+                $model->uuid = \Illuminate\Support\Str::uuid()->toString();
+            }
+        });
+    }
+
+    /**
+     * Relationship: one-to-one with Agent (still valid)
+     */
+   public function agent()
+{
+    return $this->hasOne(Agent::class);
 }
 
- /**
-     * Check if user is admin
-     */
-    public function isAdmin()
-    {
-        return $this->role === 'admin';
-    }
+public function landlord()
+{
+    return $this->hasOne(Landlord::class);
+}
 
-    /**
-     * Check if user is agent
-     */
-    public function isAgent()
-    {
-        return $this->role === 'agent';
-    }
-
-    /**
-     * Check if user is landlord
-     */
-    public function isLandlord()
-    {
-        return $this->role === 'landlord';
-    }
-
-    /**
-     * Check if user is customer
-     */
-    public function isCustomer()
-    {
-        return $this->role === 'customer';
-    }
+public function staff()
+{
+    return $this->hasOne(Staff::class);
+}
+public function tenant()
+{
+    return $this->hasOne(Tenant::class);
+}
 
 }

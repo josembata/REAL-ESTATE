@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
@@ -22,21 +21,31 @@ class AuthenticatedSessionController extends Controller
     /**
      * Handle an incoming authentication request.
      */
-   public function store(LoginRequest $request): RedirectResponse
-   {
-    $request->authenticate();
+    public function store(LoginRequest $request): RedirectResponse
+    {
+        $request->authenticate();
 
-    $request->session()->regenerate();
+        $request->session()->regenerate();
 
-    // Redirect based on role after login
-    $user = Auth::user();
-    return match($user->role) {
-        'admin' => redirect()->route('admin.dashboard'),
-        'agent' => redirect()->route('agent.dashboard'),
-        'landlord' => redirect()->route('landlord.dashboard'),
-        default => redirect()->route('customer.dashboard'),
-    };
-}
+        $user = Auth::user();
+
+        // Redirect based on Spatie roles
+        if ($user->hasRole('Admin')) {
+            return redirect()->route('admin.dashboard');
+        } elseif ($user->hasRole('Agent')) {
+            return redirect()->route('agent.dashboard');
+        } elseif ($user->hasRole('Landlord')) {
+            return redirect()->route('landlord.dashboard');
+        } elseif ($user->hasRole('Tenant')) {
+            return redirect()->route('tenant.dashboard');
+        } elseif ($user->hasRole('Staff')) {
+            return redirect()->route('staff.dashboard');
+        }
+
+        // Fallback if no role assigned
+        return redirect()->route('profile.edit')
+            ->with('warning', 'No role assigned yet. Please contact admin.');
+    }
 
     /**
      * Destroy an authenticated session.
@@ -46,7 +55,6 @@ class AuthenticatedSessionController extends Controller
         Auth::guard('web')->logout();
 
         $request->session()->invalidate();
-
         $request->session()->regenerateToken();
 
         return redirect('/');

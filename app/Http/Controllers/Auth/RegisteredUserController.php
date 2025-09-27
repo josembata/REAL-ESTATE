@@ -19,26 +19,29 @@ class RegisteredUserController extends Controller
         return view('auth.register');
     }
 
-   public function store(Request $request): RedirectResponse
-{
-    $request->validate([
-        'name' => ['required', 'string', 'max:255'],
-        'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
-        'password' => ['required', 'confirmed', Rules\Password::defaults()],
-    ]);
+    public function store(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
+            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+        ]);
 
-    $user = User::create([
-        'name' => $request->name,
-        'email' => $request->email,
-        'password' => Hash::make($request->password),
-        'role' => 'customer', // Default role
-    ]);
+        // Create the user
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+        ]);
 
-    event(new Registered($user));
+        // Assign default role (Tenant)
+        $user->assignRole('Tenant'); //  using Spatie
 
-    Auth::login($user);
+        event(new Registered($user));
 
-    return redirect()->route('verification.notice')
-        ->with('status', 'Registration successful! Please check your email to verify your account. An admin will assign your role shortly.');
-}
+        Auth::login($user);
+
+        return redirect()->route('verification.notice')
+            ->with('status', 'Registration successful! Please check your email to verify your account. An admin will assign your role shortly.');
+    }
 }

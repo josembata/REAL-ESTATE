@@ -49,7 +49,7 @@
 
          <div>
             <x-input-label for="phone" :value="__('Phone')" />
-            <x-text-input id="name" name="phone" type="text" class="mt-1 block w-full" :value="old('phone', $user->phone)" required autofocus autocomplete="phone" />
+            <x-text-input id="name" name="phone" type="text" class="mt-1 block w-full" :value="old('phone', $tenant->phone)" required autofocus autocomplete="phone" />
             <x-input-error class="mt-2" :messages="$errors->get('phone')" />
         </div>
     <div class="mt-4">
@@ -60,8 +60,8 @@
             required 
             class="block mt-1 w-full border-gray-300 focus:border-blue-500 focus:ring-blue-500 rounded-md shadow-sm">
         <option value="">{{ __('Select gender') }}</option>
-        <option value="male" {{ old('gender', $user->gender ?? '') === 'male' ? 'selected' : '' }}>Male</option>
-        <option value="female" {{ old('gender', $user->gender ?? '') === 'female' ? 'selected' : '' }}>Female</option>
+        <option value="male" {{ old('gender', $tenant->gender ?? '') === 'male' ? 'selected' : '' }}>Male</option>
+        <option value="female" {{ old('gender', $tenant->gender ?? '') === 'female' ? 'selected' : '' }}>Female</option>
         
     </select>
 
@@ -77,9 +77,9 @@
            accept="image/*"
            class="block mt-1 w-full text-sm text-gray-700 border border-gray-300 rounded-md shadow-sm cursor-pointer focus:border-blue-500 focus:ring-blue-500" />
 
-    @if(isset($user) && $user->avatar)
+    @if(isset($user) && $tenant->avatar)
         <div class="mt-2">
-            <img src="{{ asset($user->avatar) }}" 
+            <img src="{{ asset($tenant->avatar) }}" 
                  alt="Profile Picture" 
                  class="h-16 w-16 rounded-full object-cover">
         </div>
@@ -95,7 +95,7 @@
           name="bio" 
           rows="4"
           class="block mt-1 w-full px-4 py-3 border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500"
-          required autofocus autocomplete="bio">{{ old('bio', $user->bio ?? '') }}</textarea>
+          required autofocus autocomplete="bio">{{ old('bio', $tenant->bio ?? '') }}</textarea>
 
 
     <x-input-error :messages="$errors->get('bio')" class="mt-2" />

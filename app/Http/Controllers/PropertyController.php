@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Property;
+use App\Models\AmenityCategory;
 use Illuminate\Http\Request;
 
 class PropertyController extends Controller
@@ -42,16 +43,7 @@ class PropertyController extends Controller
         'cover_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
     ]);
 
-     $regions = [
-        'Dar es Salaam' => ['Ilala', 'Kinondoni', 'Temeke'],
-        'Dodoma' => ['Dodoma Urban', 'Chamwino'],
-        'Arusha' => ['Arusha Urban', 'Moshi'],
-        'Mwanza' => ['Nyamagana', 'Ilemela'],
-        'Kilimanjaro' => ['Moshi', 'Hai', 'Siha'],
-        'Morogoro' => ['Morogoro Urban', 'Kilombero'],
-        'Tanga' => ['Tanga Urban', 'Muheza'],
-        
-    ];
+    
 
     if ($request->hasFile('cover_image')) {
         $filename = time() . '_' . $request->file('cover_image')->getClientOriginalName();
@@ -118,4 +110,31 @@ class PropertyController extends Controller
         $property->delete();
         return redirect()->route('properties.index')->with('success', 'Property deleted successfully!');
     }
+
+
+  // Show form to assign amenities to a property
+    public function assignAmenitiesForm(Property $property)
+    {
+        $categories = AmenityCategory::with('amenities')->get();
+
+        return view('properties.assignamenities', compact('property', 'categories'));
+    }
+
+    // Save assigned amenities
+    public function assignAmenities(Request $request, Property $property)
+    {
+        // Validate amenities 
+        $validated = $request->validate([
+            'amenities' => 'array',
+            'amenities.*' => 'exists:amenities,id',
+        ]);
+
+        // Sync amenities with property
+        $property->amenities()->sync($validated['amenities'] ?? []);
+
+        return redirect()->route('properties.index')
+            ->with('success', 'Amenities updated successfully!');
+    }
+
+
 }

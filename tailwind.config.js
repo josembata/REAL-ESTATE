@@ -15,7 +15,10 @@ export default {
                     600: '#2563eb',
                     700: '#1d4ed8',
                 }
-            }
+            },
+            fontFamily: {
+                'inter': ['Inter', 'sans-serif'],
+            },
         },
     },
     plugins: [],

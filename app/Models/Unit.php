@@ -20,11 +20,39 @@ class Unit extends Model
         'status',
         'size_sqft',
         'furnished',
+        
+        
     ];
 
+
+    
     //each unit depend on one property
     public function property()
     {
         return $this->belongsTo(Property::class);
     }
+
+     // Relation: Unit has many images
+// App\Models\Unit.php
+
+public function unitImages()
+{
+    return $this->hasMany(UnitImage::class, 'unit_id'); 
+}
+
+public function rooms()
+{
+    return $this->hasMany(Room::class, 'unit_id', 'id');
+}
+
+
+public function pricePlans()
+{
+    return $this->hasMany(UnitPricePlan::class);
+}
+
+
+
+
+
 }

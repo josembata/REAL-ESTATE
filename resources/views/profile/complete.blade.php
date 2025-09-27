@@ -87,7 +87,7 @@
                               id="bio"
                               rows="4"
                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
-                              placeholder="Tell us a little about yourself...">{{ old('bio') }}</textarea>
+                              placeholder="Tell us  about yourself...">{{ old('bio') }}</textarea>
                     
                 </div>
 
@@ -117,21 +117,7 @@
             e.target.value = formatted;
         });
 
-        function formatPhoneNumber(phone) {
-            if (!phone) return '';
-            
-            const cleaned = phone.replace(/\D/g, '');
-            const match = cleaned.match(/^(\d{1,3})?(\d{0,3})?(\d{0,4})?$/);
-            
-            if (match) {
-                let formatted = '';
-                if (match[1]) formatted += match[1];
-                if (match[2]) formatted += ' (' + match[2];
-                if (match[3]) formatted += ') ' + match[3];
-                return formatted;
-            }
-            return phone;
-        }
+  
     </script>
 
     <style>

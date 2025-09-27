@@ -28,5 +28,13 @@ class Property extends Model
 {
     return $this->hasMany(Unit::class);
 }
+
+
+    public function amenities()
+    {
+        return $this->belongsToMany(Amenity::class, 'property_amenities');
+    }
+
+
 }
 

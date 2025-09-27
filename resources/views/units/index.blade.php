@@ -1,4 +1,9 @@
 <x-app-layout>
+     @if(session('success'))
+    <div class="bg-green-100 text-green-700 px-4 py-2 rounded mb-4">
+        {{ session('success') }}
+    </div>
+@endif
     <div class="max-w-6xl mx-auto mt-8">
         <h2 class="text-2xl font-bold mb-6">Units List</h2>
 
@@ -39,10 +44,10 @@
 
                         </td>
                         <td class="px-4 py-2 border">
-                        <a href="{{ route('units.show', $unit->id) }}" 
+                        <!-- <a href="{{ route('units.show', $unit->id) }}" 
                         class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600">
                          View
-                        </a>
+                        </a> -->
                         <a href="{{ route('units.edit', $unit->id) }}" 
                          class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">
                          Edit
@@ -51,12 +56,32 @@
                          @csrf
                          @method('DELETE')
                         <button type="submit" 
+
+                        
                          
                          onclick="return confirm('Are you sure you want to delete this unit?')"
                           class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded">
                           Delete
                           </button>
                           </form>
+                           <a href="{{ route('units.rooms.index', $unit->id) }}" 
+                          class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                          View Rooms
+                          </a>
+
+                           <a href="{{ route('price-plans.index', $unit) }}" 
+                          class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                          Add Price Plan
+                          </a>
+
+    <a href="{{ route('bookings.create', ['unit' => $unit->id]) }}" 
+       class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-green-700">
+       Book Now
+    </a>
+
+   
+
+
                          </td>
 
                     </tr>
