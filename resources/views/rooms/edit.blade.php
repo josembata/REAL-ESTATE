@@ -34,12 +34,7 @@
                        class="w-full border rounded px-3 py-2">
             </div>
 
-            <div class="mb-4">
-                <label>Price</label>
-                <input type="number" step="0.01" name="price" 
-                       value="{{ old('price', $room->price) }}" 
-                       class="w-full border rounded px-3 py-2">
-            </div>
+           
 
             <div class="mb-4">
                 <label>Status</label>

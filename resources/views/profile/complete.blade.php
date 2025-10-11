@@ -91,6 +91,48 @@
                     
                 </div>
 
+                <!-- ...existing code... -->
+
+
+<div class="mb-6 border-t pt-6 mt-6">
+    <h3 class="text-lg font-semibold mb-4">Bank Payment Information <span class="text-sm text-gray-500">(Optional)</span></h3>
+    <div class="mb-4">
+        <label class="block text-gray-700 text-sm font-medium mb-2" for="bank_name">
+            Bank Name
+        </label>
+        <input type="text"
+               name="bank_name"
+               id="bank_name"
+               value="{{ old('bank_name') }}"
+               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
+               placeholder=" CRDB, NMB, NBC">
+    </div>
+    <div class="mb-4">
+        <label class="block text-gray-700 text-sm font-medium mb-2" for="account_number">
+            Account Number
+        </label>
+        <input type="text"
+               name="account_number"
+               id="account_number"
+               value="{{ old('account_number') }}"
+               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
+               placeholder=" 0123456789">
+    </div>
+    <div class="mb-4">
+        <label class="block text-gray-700 text-sm font-medium mb-2" for="account_holder">
+            Account Holder Name
+        </label>
+        <input type="text"
+               name="account_holder"
+               id="account_holder"
+               value="{{ old('account_holder') }}"
+               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
+               placeholder="Amasu Suley">
+    </div>
+</div>
+
+
+
                 <!-- Submit Button -->
                 <div class="flex justify-between items-center mt-8">
                   

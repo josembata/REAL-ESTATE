@@ -19,6 +19,13 @@ use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\BillingController;
 use App\Http\Controllers\RoomPricePlanController;
 use App\Http\Controllers\RoomBookingController;
+use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\InvoiceController;
+use App\Http\Controllers\OwnerController;
+use App\Http\Controllers\OwnershipController;
+use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\LeaseController;
+use App\Http\Controllers\LandlordReportController;
 use Illuminate\Support\Facades\Route;
 
 // Public routes
@@ -143,11 +150,22 @@ Route::middleware(['auth', 'verified', 'profile.complete'])->prefix('admin') ->n
 
      
 
-        // Role assignment
-Route::get('/roles/assign', [RoleController::class, 'assignForm'])->name('roles.assign.form');
-Route::post('/roles/assign', [RoleController::class, 'assignRole'])->name('roles.assign');
+//         // Role assignment
+// Route::get('/roles/assign', [RoleController::class, 'assignForm'])->name('roles.assign.form');
+// Route::post('/roles/assign', [RoleController::class, 'assignRole'])->name('roles.assign');
 
     });
+
+    //assign permissions to roles
+    Route::get('/roles/assign-permissions', [RoleController::class, 'showAssignPermissionsForm'])
+    ->name('roles.assign.permissions.form');
+
+Route::post('/roles/assign-permissions', [RoleController::class, 'assignPermissions'])
+    ->name('roles.assign.permissions');
+
+    Route::post('/roles/toggle-permission', [RoleController::class, 'togglePermission'])
+    ->name('roles.toggle.permission');
+
 
        // Roles routes
         Route::get('/roles', function () {
@@ -302,13 +320,14 @@ Route::get('/staff/dashboard', function () {
 //property routes
  
 Route::middleware(['auth'])->group(function () {
-    Route::get('/properties', [PropertyController::class, 'index'])->name('properties.index');//show list
-    Route::get('/properties/create', [PropertyController::class, 'create'])->name('properties.create');//show form
-    Route::post('/properties', [PropertyController::class, 'store'])->name('properties.store');//insert data
-    Route::get('/properties/{property}/edit', [PropertyController::class, 'edit'])->name('properties.edit');//edit data
-    Route::put('/properties/{property}', [PropertyController::class, 'update'])->name('properties.update');//update data
-    Route::get('/properties/{property}', [PropertyController::class, 'show'])->name('properties.show');//show single
-    Route::delete('/properties/{property}', [PropertyController::class, 'destroy'])->name('properties.destroy');//delete data
+    //property routes
+     Route::get('/properties', [PropertyController::class, 'index']) ->name('properties.index') ->middleware('can:view-properties');
+    Route::get('/properties/create', [PropertyController::class, 'create']) ->name('properties.create') ->middleware('can:create-properties');
+   Route::post('/properties', [PropertyController::class, 'store'])->name('properties.store') ->middleware('can:create-properties');
+     Route::get('/properties/{property}/edit', [PropertyController::class, 'edit'])->name('properties.edit')->middleware('can:edit-properties');
+    Route::put('/properties/{property}', [PropertyController::class, 'update'])->name('properties.update')->middleware('can:edit-properties');
+    Route::get('/properties/{property}', [PropertyController::class, 'show'])->name('properties.show')->middleware('can:show-properties');
+    Route::delete('/properties/{property}', [PropertyController::class, 'destroy'])->name('properties.destroy')->middleware('can:delete-properties');
 
 
 // amenities category
@@ -369,7 +388,14 @@ Route::get('/bookings/{booking}', [BookingController::class, 'show'])->name('boo
 
 // Confirm / Cancel booking
 Route::patch('/bookings/{booking}/confirm', [BookingController::class, 'confirm'])->name('bookings.confirm');
+
 Route::patch('/bookings/{booking}/cancel', [BookingController::class, 'cancel'])->name('bookings.cancel');
+Route::patch('/bookings/{booking}/restore', [BookingController::class, 'restore'])->name('bookings.restore');
+
+
+Route::get('/my-bookings', [BookingController::class, 'userBookings'])->name('bookings.user');
+
+
 
 
 
@@ -402,8 +428,15 @@ Route::delete('/units/{unit}/rooms/{room}', [RoomController::class, 'destroy'])-
 
 
 // Room Price Plans
-Route::get('/rooms/{room}/price-plans/create', [RoomPricePlanController::class, 'create'])->name('rooms.price-plans.create');
-Route::post('/rooms/{room}/price-plans', [RoomPricePlanController::class, 'store'])->name('rooms.price-plans.store');
+Route::prefix('rooms/{room}')->group(function () {
+    Route::get('price-plans', [RoomPricePlanController::class, 'index'])->name('rooms.price-plans.index');
+    Route::get('price-plans/create', [RoomPricePlanController::class, 'create'])->name('rooms.price-plans.create');
+    Route::post('price-plans', [RoomPricePlanController::class, 'store'])->name('rooms.price-plans.store');
+    Route::get('price-plans/{pricePlan}/edit', [RoomPricePlanController::class, 'edit'])->name('rooms.price-plans.edit');
+    Route::put('price-plans/{pricePlan}', [RoomPricePlanController::class, 'update'])->name('rooms.price-plans.update');
+    Route::delete('price-plans/{pricePlan}', [RoomPricePlanController::class, 'destroy'])->name('rooms.price-plans.destroy');
+});
+
 
 
 
@@ -477,7 +510,57 @@ Route::get('/billing/create/{unit}', [BillingController::class, 'create'])->name
 Route::post('/billing', [BillingController::class, 'store'])->name('billing.store');
 
 
+//payment routes 
+Route::get('/bookings/{booking}/payment', [BookingController::class, 'payment'])->name('bookings.payment');
+Route::post('/bookings/{booking}/pay', [BookingController::class, 'processPayment'])->name('bookings.pay');
 
+Route::get('/payments/{invoice}/choose', [PaymentController::class, 'chooseMethod'])->name('payments.choose');
+
+
+//payment routes
+
+Route::prefix('payments')->group(function () {
+    Route::get('/{invoice}/choose', [PaymentController::class, 'chooseMethod'])->name('payments.choose');
+
+    Route::post('/{invoice}/mobile', [PaymentController::class, 'mobile'])->name('payments.mobile');
+    Route::post('/{invoice}/card', [PaymentController::class, 'card'])->name('payments.card');
+});
+
+//invoices routes
+    // Route::get('/', [InvoiceController::class, 'index'])->name('invoices.index'); // list all invoices
+    Route::get('invoices/{invoice}', [InvoiceController::class, 'show'])->name('invoices.show'); // show a single invoice
+    Route::get('/invoices', [InvoiceController::class, 'index'])->name('invoices.index');
+    Route::get('/invoices/{invoice}/print', [InvoiceController::class, 'print'])->name('invoices.print');
+    Route::get('/invoices/{invoice}/download', [InvoiceController::class, 'download'])->name('invoices.download');
+
+    
+Route::resource('owners', OwnerController::class);
+Route::resource('ownerships', OwnershipController::class);
+Route::resource('transactions', TransactionController::class);
+
+
+//approve ownership documents
+    Route::get('ownership-documents', [OwnershipController::class, 'documentsPending'])->name('admin.documents.pending');
+    Route::post('ownership-documents/{document}/verify', [OwnershipController::class, 'verifyDocument'])->name('admin.documents.verify');
+
+
+
+//leases routes
+Route::get('leases/{lease}', [LeaseController::class, 'show'])->name('leases.show');
+Route::get('leases/{lease}/download', [LeaseController::class, 'download'])->name('leases.download');
+ Route::get('/leases', [LeaseController::class, 'index'])->name('leases.index');
+
+
+// Landlord Reports
+
+ Route::get('/landlord/report', [LandlordReportController::class, 'index'])
+        ->name('landlord.report');
+
+        Route::get('/my/report', [LandlordReportController::class, 'myReport'])
+        ->name('landlords.my_report');
+
+
+    
 });
 
 

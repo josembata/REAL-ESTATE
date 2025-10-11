@@ -17,9 +17,22 @@
                 <textarea name="description" class="border p-2 w-full"></textarea>
             </div>
 
-            <div class="mb-3">
-                <label class="block">Price</label>
-                <input type="number" name="price" class="border p-2 w-full" required>
+            <div class="mb-4">
+                <label>Room Type</label>
+                <select name="room_type" class="w-full border rounded px-3 py-2" required>
+                    <option value="bedroom" >Bedroom</option>
+                    <option value="bathroom" >Bathroom</option>
+                    <option value="office">Office</option>
+                    <option value="shop" >Shop</option>
+                    <option value="warehouse">Warehouse</option>
+                    <option value="other" >Other</option>
+                </select>
+            </div>
+
+            <div class="mb-4">
+                <label>Size (sqft)</label>
+                <input type="number" step="0.01" name="size_sqft" 
+                       class="w-full border rounded px-3 py-2">
             </div>
 
             <div class="mb-3">

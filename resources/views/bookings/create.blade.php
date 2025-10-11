@@ -118,7 +118,7 @@
                     total = diffDays * price;
             }
 
-            totalAmount.value = `$${total.toFixed(2)}`;
+            totalAmount.value = `${total.toFixed(2)}`;
         }
 
         checkIn.addEventListener('change', calculateTotal);

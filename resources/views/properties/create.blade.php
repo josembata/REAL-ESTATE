@@ -160,6 +160,16 @@
                         </div>
 
                         <div class="mb-5">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Title Deed Number</label>
+                            <div class="relative">
+                                <input type="text" name="title_deed_number" class="input-field w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent" placeholder="Enter title deed number">
+                                <div class="absolute inset-y-0 right-0 flex items-center pr-3">
+                                    <i class="fas fa-file-alt text-gray-400"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-5">
                             <label class="block text-sm font-medium text-gray-700 mb-2">Property Type</label>
                             <div class="relative">
                                 <select name="type" class="input-field w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent appearance-none" required>
@@ -174,6 +184,25 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="mb-4">
+    <label for="agent_id" class="block text-sm font-medium text-gray-700">Assign Agent</label>
+<div>
+    <label for="agent_user_id" class="block text-sm font-medium text-gray-700">Assign Agent</label>
+    <select name="agent_user_id" id="agent_user_id" class="border rounded-md p-2 w-full">
+        <option value="">-- Select Agent --</option>
+        @foreach($agents as $agent)
+            <option value="{{ $agent->id }}"
+                {{ (isset($property) && $property->agent_id == $agent->id) ? 'selected' : '' }}>
+                {{ $agent->name }} ({{ $agent->email }})
+            </option>
+        @endforeach
+    </select>
+</div>
+
+
+
+</div>
+
                         
                         <div class="mb-5">
                             <label class="block text-sm font-medium text-gray-700 mb-2">Cover Image</label>
@@ -286,8 +315,8 @@
             const regionSelect = document.getElementById("region");
             const citySelect   = document.getElementById("city");
 
-            // --- Init Map ---
-            var map = L.map('map').setView([-6.7924, 39.2083], 7); // Default: Dar es Salaam
+            // Init Map 
+            var map = L.map('map').setView([-6.7924, 39.2083], 7); // Default Dar es Salaam
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; OpenStreetMap contributors'
             }).addTo(map);

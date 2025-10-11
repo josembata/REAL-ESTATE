@@ -25,16 +25,6 @@
                 <textarea name="description" rows="3" class="w-full border p-2 rounded"></textarea>
             </div>
 
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-sm font-medium mb-2">Price</label>
-                    <input type="number" step="0.01" name="price" class="w-full border p-2 rounded" required>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium mb-2">Currency</label>
-                    <input type="text" name="currency" value="TZS" class="w-full border p-2 rounded" required>
-                </div>
-            </div>
 
             {{-- Unit Type --}}
             <div>

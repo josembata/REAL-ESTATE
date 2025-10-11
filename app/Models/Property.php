@@ -20,6 +20,8 @@ class Property extends Model
         'latitude',
         'longitude',
         'cover_image',
+        'title_deed_number',
+        'agent_id',
     ];
 
 
@@ -35,6 +37,45 @@ class Property extends Model
         return $this->belongsToMany(Amenity::class, 'property_amenities');
     }
 
+public function owners()
+{
+    return $this->belongsToMany(Owner::class, 'ownerships')
+        ->withPivot('ownership_type', 'share_percentage', 'purchase_date', 'status')
+        ->withTimestamps();
+}
+public function ownerships()
+{
+    return $this->hasMany(Ownership::class);
+}
+
+
+
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class);
+    }
+
+    public function bookings()
+{
+    return $this->hasMany(Booking::class);
+}
+
+public function agent()
+{
+    return $this->belongsTo(User::class, 'agent_id');
+}
+
+public function landlords()
+{
+    return $this->hasManyThrough(
+        Landlord::class,
+        Ownership::class,
+        'property_id', // Foreign key on ownerships table
+        'id',           // Foreign key on landlords table
+        'id',           // Local key on properties table
+        'owner_id'      // Local key on ownerships table
+    );
+}
 
 }
 

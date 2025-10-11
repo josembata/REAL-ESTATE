@@ -11,15 +11,11 @@
                 <h3 class="text-lg font-semibold">Booking Information</h3>
 
                 <p><strong>Booking ID:</strong> {{ $booking->uuid }}</p>
-                <p><strong>Unit:</strong> {{ $booking->unit->name ?? 'N/A' }}</p>
+                <p><strong>Unit:</strong> {{ $booking->unit->name ?? 'N' }}</p>
                 <p><strong>Property:</strong> {{ $booking->property->name ?? 'N/A' }}</p>
                 <p><strong>Customer:</strong> {{ $booking->customer->name ?? 'N/A' }}</p>
-                <p><strong>Agent:</strong> {{ $booking->agent->name ?? 'N/A' }}</p>
+                <p><strong>Agent:</strong> {{ $booking->agent->name ?? 'N' }}</p>
 
-                <p><strong>Price Plan:</strong>
-                    {{ $booking->unitPricePlan->name ?? 'N/A' }}
-                    ({{ $booking->unitPricePlan->category->name ?? '' }})
-                </p>
 
                 <p><strong>Check In:</strong> {{ $booking->check_in }}</p>
                 <p><strong>Check Out:</strong> {{ $booking->check_out }}</p>
@@ -28,21 +24,23 @@
                 <p><strong>Status:</strong> {{ ucfirst($booking->status) }}</p>
                 <p><strong>Payment Status:</strong> {{ ucfirst($booking->payment_status) }}</p>
 
-                <div class="mt-6 flex space-x-4">
-                    @if($booking->status === 'pending')
-                        <form method="POST" action="{{ route('bookings.confirm', $booking->id) }}">
-                            @csrf
-                            @method('PATCH')
-                            <x-primary-button>Confirm</x-primary-button>
-                        </form>
+               <div class="mt-6 flex space-x-4">
+    @if($booking->status === 'pending' && $booking->payment_status === 'unpaid')
+        <a href="{{ route('bookings.payment', $booking->id) }}" 
+           class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">
+           Make Payment
+        </a>
 
-                        <form method="POST" action="{{ route('bookings.cancel', $booking->id) }}">
-                            @csrf
-                            @method('PATCH')
-                            <x-danger-button>Cancel</x-danger-button>
-                        </form>
-                    @endif
-                </div>
+        <form method="POST" action="{{ route('bookings.cancel', $booking->id) }}">
+            @csrf
+            @method('PATCH')
+            <x-danger-button>Cancel</x-danger-button>
+        </form>
+    @elseif($booking->payment_status === 'paid')
+        <span class="text-blue-600 font-semibold">Payment Completed</span>
+    @endif
+</div>
+
             </div>
         </div>
     </div>

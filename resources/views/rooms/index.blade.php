@@ -19,7 +19,6 @@
                     <th class="px-4 py-2">Name</th>
                     <th>Type</th>
                     <th>Size (sqft)</th>
-                    <th>Price</th>
                     <th>Status</th>
                     <th>Actions</th>
                 </tr>
@@ -30,7 +29,6 @@
                     <td class="border px-4 py-2">{{ $room->room_name }}</td>
                     <td>{{ $room->room_type }}</td>
                     <td>{{ $room->size_sqft }}</td>
-                    <td>{{ $room->price }}</td>
                     <td>{{ $room->availability_status }}</td>
                     <td class="space-x-2">
                         <a href="{{ route('units.rooms.edit', [$unit->id, $room->room_id]) }}" 
@@ -41,7 +39,7 @@
                            View
                         </a>
 
-                        <a href="{{ route('rooms.price-plans.create', $room->room_id) }}" 
+                        <a href="{{ route('rooms.price-plans.index', $room->room_id) }}" 
                            class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded">
                            Add Price Plan
                         </a>

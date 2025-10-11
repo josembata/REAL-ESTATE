@@ -25,6 +25,18 @@
                     <option value="office" {{ $property->type == 'office' ? 'selected' : '' }}>Office</option>
                 </select>
             </div>
+                                  <div class="mb-4">
+    <label for="agent_id" class="block text-sm font-medium text-gray-700">Assign Agent</label>
+   <select name="agent_user_id" id="agent_user_id" class="border rounded-md p-2 w-full">
+        <option value="">-- Select Agent --</option>
+        @foreach($agents as $agent)
+            <option value="{{ $agent->id }}"
+                {{ (isset($property) && $property->agent_id == $agent->id) ? 'selected' : '' }}>
+                {{ $agent->name }} ({{ $agent->email }})
+            </option>
+        @endforeach
+    </select>
+</div>
 
             <div class="mb-4">
                 <label class="block text-sm font-medium">Status</label>

@@ -5,7 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\Unit;
 use App\Models\Booking;
 use App\Models\UnitPricePlan;
+use App\Http\Controllers\InvoiceController;
 use Illuminate\Http\Request;
+use Stripe\Stripe;
+use Stripe\PaymentIntent;
+use Illuminate\Support\Facades\Http;
 
 class BookingController extends Controller
 {
@@ -89,8 +93,12 @@ class BookingController extends Controller
         // Mark the unit as booked 
         $unit->update(['status' => 'booked']);
 
-        return redirect()->route('bookings.show', $booking->id)
-            ->with('success', 'Booking created successfully! Unit reserved.');
+          // Attach to invoice automatically
+    $invoiceController = new InvoiceController();
+    $invoiceController->addBookingToInvoice($booking);
+
+        return redirect()->route('bookings.user')
+            ->with('success', 'Booking created successfully!.');
     }
 
     public function confirm(Booking $booking)
@@ -110,8 +118,13 @@ class BookingController extends Controller
 
         $booking->unit->update(['availability_status' => 'available']);
 
+        //remove from invoice
+    $invoiceController = new InvoiceController();
+    $invoiceController->removeBookingFromInvoice($booking);
+
         return back()->with('success', 'Booking cancelled & unit available again.');
     }
+
 
     public function show($id)
     {
@@ -120,4 +133,62 @@ class BookingController extends Controller
 
         return view('bookings.show', compact('booking'));
     }
+
+    public function payment(Booking $booking)
+{
+    return view('bookings.payment', compact('booking'));
+}
+
+public function processPayment(Request $request, Booking $booking)
+{
+    $validated = $request->validate([
+        'method' => 'required|in:mpesa,tigopesa,card',
+    ]);
+
+    
+    $booking->update([
+        'payment_status' => 'paid',
+        'status' => 'confirmed', // update booking after payment
+    ]);
+
+    return redirect()->route('bookings.show', $booking->id)
+                     ->with('success', 'Payment completed successfully!');
+}
+
+public function userBookings()
+{
+    $user = auth()->user();
+
+    // Fetch all active bookings
+    $bookings = $user->bookings()->with(['unit', 'property', 'unitPricePlan'])->get();
+
+    // Fetch the user’s active invoice
+    $invoice = $user->invoices()->whereIn('status', ['unpaid','partially_paid'])->first();
+
+    return view('bookings.user-bookings', compact('bookings', 'invoice'));
+}
+
+public function restore(Booking $booking)
+{
+    // Only restore if previously cancelled
+    if ($booking->status !== 'cancelled') {
+        return back()->with('error', 'Only cancelled bookings can be restored.');
+    }
+
+    $booking->update([
+        'status' => 'pending',
+        'cancelled_at' => null,
+    ]);
+
+    // Mark unit unavailable again
+    $booking->unit->update(['availability_status' => 'booked']);
+
+    // Add booking amount back into invoice
+    $invoiceController = new InvoiceController();
+    $invoiceController->addBookingToInvoice($booking);
+
+    return back()->with('success', 'Booking restored & added back to invoice.');
+}
+
+
 }

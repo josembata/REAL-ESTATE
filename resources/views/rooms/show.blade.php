@@ -18,9 +18,7 @@
             <strong>Size (sqft):</strong> {{ $room->size_sqft ?? 'N/A' }}
         </div>
 
-        <div class="mb-4">
-            <strong>Price:</strong> {{ $room->price ? '$'.$room->price : 'N/A' }}
-        </div>
+      
 
         <div class="mb-4">
             <strong>Status:</strong> {{ ucfirst($room->availability_status) }}

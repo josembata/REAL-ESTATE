@@ -32,8 +32,11 @@ class Unit extends Model
         return $this->belongsTo(Property::class);
     }
 
-     // Relation: Unit has many images
-// App\Models\Unit.php
+  public function bookings()
+{
+    return $this->hasMany(Booking::class);
+}
+
 
 public function unitImages()
 {

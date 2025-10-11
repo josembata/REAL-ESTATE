@@ -14,6 +14,9 @@ class Tenant extends Model
         'phone',
         'gender',
         'bio',
+        'bank_name',
+        'account_number',
+        'account_holder',
         'avatar',
         'profile_complete',
     ];
@@ -22,4 +25,10 @@ class Tenant extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function leases()
+{
+    return $this->hasMany(Lease::class, 'tenant_id');
+}
+
 }

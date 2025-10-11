@@ -29,7 +29,7 @@
                         </label>
                     </div>
                 @empty
-                    <p>No price plans defined for this room. <a href="{{ route('rooms.price-plans.create', [$unit, $room]) }}" class="text-blue-600">Add one</a></p>
+                    <p>No price plans defined for this room. </p>
                 @endforelse
             </div>
 
@@ -52,7 +52,7 @@
             </div>
 
             <div class="mt-4">
-                <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded">Book Now</button>
+                <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Book Now</button>
                 <a href="{{ route('units.rooms.index', $unit) }}" class="ml-3 text-gray-600">Back to Rooms</a>
             </div>
         </form>
@@ -105,7 +105,7 @@
                 if (units <= 0) units = 1;
 
                 const total = units * price;
-                totalDisplay.value = `$${total.toFixed(2)}`;
+                totalDisplay.value = `${total.toFixed(2)}`;
                 totalInput.value = total.toFixed(2);
             }
 

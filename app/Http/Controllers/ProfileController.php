@@ -54,6 +54,9 @@ public function update(ProfileUpdateRequest $request): RedirectResponse
     $tenant->phone = $request->input('phone', $tenant->phone);
     $tenant->gender = $request->input('gender', $tenant->gender);
     $tenant->bio = $request->input('bio', $tenant->bio);
+    $tenant->bank_name = $request->input('bank_name', $tenant->bank_name);
+    $tenant->account_number = $request->input('account_number', $tenant->account_number);
+    $tenant->account_holder = $request->input('account_holder', $tenant->account_holder);
 
     // Check if profile is complete
     $tenant->profile_complete = !empty($tenant->phone)
@@ -117,6 +120,9 @@ public function completeProfile(ProfileUpdateRequest $request): RedirectResponse
             'phone'   => $request->phone,
             'gender'  => $request->gender,
             'bio'     => $request->bio,
+            'bank_name' => $request->bank_name, 
+            'account_number' => $request->account_number, 
+            'account_holder' => $request->account_holder,
             'avatar'  => $avatarPath,
             'profile_complete' => true,
         ]

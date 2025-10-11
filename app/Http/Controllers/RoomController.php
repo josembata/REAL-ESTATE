@@ -37,8 +37,9 @@ class RoomController extends Controller
         'unit_id' => $unit->id,
         'room_name' => $validated['room_name'],
         'description' => $validated['description'] ?? null,
-        'price' => $validated['price'],
         'availability_status' => $validated['availability_status'],
+        'room_type' =>$validated['room_type'],
+         'size_sqft' =>$validated['size_sqft'],
     ]);
 
     // Save images if uploaded
@@ -72,7 +73,6 @@ public function update(Request $request, Unit $unit, Room $room)
         'room_name' => 'required|string|max:100',
         'room_type' => 'required|in:bedroom,bathroom,office,shop,warehouse,other',
         'size_sqft' => 'nullable|numeric|min:0',
-        'price' => 'nullable|numeric|min:0',
         'availability_status' => 'required|in:available,occupied,reserved',
     ]);
 

@@ -39,9 +39,9 @@ public function room()
 
     // Relationships
    public function unit()
-    {
-        return $this->belongsTo(Unit::class, 'unit_id');
-    }
+{
+    return $this->belongsTo(Unit::class);
+}
       public function property()
     {
         return $this->belongsTo(Property::class, 'property_id');
@@ -72,6 +72,34 @@ public function pricePlan()
     }
     return null;
 }
+
+public function invoiceBookings()
+{
+    return $this->hasMany(InvoiceBooking::class);
+}
+
+// public function invoices()
+// {
+//     return $this->belongsToMany(Invoice::class, 'invoice_bookings')
+//                 ->withPivot('amount')
+//                 ->withTimestamps();
+// }
+
+public function invoices()
+{
+    return $this->belongsToMany(Invoice::class, 'invoice_booking')
+                ->withPivot('amount')
+                ->withTimestamps();
+}
+
+public function transaction()
+{
+    return $this->hasOne(Transaction::class); 
+}
+
+
+
+
 
 
 }

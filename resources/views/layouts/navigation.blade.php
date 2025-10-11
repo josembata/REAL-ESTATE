@@ -23,22 +23,35 @@
                             <x-nav-link :href="route('admin.users.index')" :active="request()->routeIs('admin.*')">
                                 {{ __('Admin Panel') }}
                             </x-nav-link>
+                             <x-nav-link :href="route('properties.index')" :active="request()->routeIs('properties.index')">
+                                {{ __('Properties') }}
+                            </x-nav-link>
                                <x-nav-link :href="route('roles.index')" :active="request()->routeIs('roles.index')">
                                 {{ __('Roles') }}
                             </x-nav-link>
                              <x-nav-link :href="route('roles.assign.form')" :active="request()->routeIs('roles.assign.form')">
                                 {{ __('Assign Roles') }}
                             </x-nav-link>
+                             <x-nav-link :href="route('permissions.index')" :active="request()->routeIs('permissions.index')">
+                                {{ __('Permissions') }}
+                            </x-nav-link>
+                             <x-nav-link :href="route('roles.assign.permissions.form')" :active="request()->routeIs('roles.assign.permissions.form')">
+                                {{ __('Assign Permissions') }}
+                            </x-nav-link>
+                              <x-nav-link :href="route('admin.documents.pending')" :active="request()->routeIs('admin.documents.pending')">
+                                {{ __('Dcs verification') }}
+                            </x-nav-link>
+                             <x-nav-link :href="route('ownerships.index')" :active="request()->routeIs('ownerships.index')">
+                                {{ __('Ownerships') }}
+                            </x-nav-link>
                         @endif
 
                         <!-- Agent Links -->
                         @if(Auth::user()->hasRole('Agent'))
-                            <x-nav-link :href="route('agent.properties')" :active="request()->routeIs('agent.properties')">
+                            <x-nav-link :href="route('properties.index')" :active="request()->routeIs('properties.index')">
                                 {{ __('My Properties') }}
                             </x-nav-link>
-                            <x-nav-link :href="route('agent.appointments')" :active="request()->routeIs('agent.appointments')">
-                                {{ __('Appointments') }}
-                            </x-nav-link>
+                           
                         @endif
 
                           <!-- Staff Links -->
@@ -51,17 +64,23 @@
                             </x-nav-link>
                              <x-nav-link :href="route('roles.assign.form')" :active="request()->routeIs('roles.assign.form')">
                                 {{ __('Assign Roles') }}
+
                             </x-nav-link>
+
                         @endif
 
                         <!-- Landlord Links -->
                         @if(Auth::user()->hasRole('Landlord'))
-                            <x-nav-link :href="route('landlord.properties')" :active="request()->routeIs('landlord.properties')">
+                             <x-nav-link :href="route('properties.index')" :active="request()->routeIs('properties.index')">
                                 {{ __('My Properties') }}
                             </x-nav-link>
-                            <x-nav-link :href="route('landlord.tenants')" :active="request()->routeIs('landlord.tenants')">
-                                {{ __('Tenants') }}
+                            <x-nav-link :href="route('landlord.report')" :active="request()->routeIs('landlord.report')">
+                                {{ __('Reports') }}
                             </x-nav-link>
+                              <x-nav-link :href="route('ownerships.index')" :active="request()->routeIs('ownerships.index')">
+                                {{ __('Ownerships') }}
+                            </x-nav-link>
+                            
                         @endif
 
                         <!-- Tenant Links -->
@@ -77,6 +96,17 @@
                             </x-nav-link>
                             <x-nav-link :href="route('inquiries.index')" :active="request()->routeIs('inquiries.index')">
                                 {{ __('Inquiries') }}
+                            </x-nav-link>
+                            <x-nav-link :href="route('bookings.user')" :active="request()->routeIs('bookings.user')">
+                                {{ __('My Bookings') }}
+                            </x-nav-link>
+                             <x-nav-link :href="route('invoices.index')" :active="request()->routeIs('invoices.index')">
+                                {{ __('Invoices') }}
+                            </x-nav-link>
+                            
+                            
+                             <x-nav-link :href="route('leases.index')" :active="request()->routeIs('leases.index')">
+                                {{ __('Leases') }}
                             </x-nav-link>
                         @endif
                     @endauth

@@ -81,11 +81,13 @@ public function destroy($id)
         $data = $request->validate([
             'user_id' => 'required|exists:users,id',
             'role' => 'required|exists:roles,name',
-            // optional extra fields for role-specific tables:
+            //  fields for role-specific tables:
             'license_number' => 'nullable|string',
             'experience_years' => 'nullable|integer',
             'company_name' => 'nullable|string',
             'address' => 'nullable|string',
+            'tax_id' => 'nullable|string',
+            'bank_account' => 'nullable|string',
             'department' => 'nullable|string',
             'position' => 'nullable|string',
             'employee_number' => 'nullable|string',
@@ -114,6 +116,8 @@ public function destroy($id)
                 [
                     'company_name' => $data['company_name'] ?? null,
                     'address' => $data['address'] ?? null,
+                    'tax_id' => $data['tax_id'] ?? null,
+                    'bank_account' => $data['bank_account'] ?? null,
                 ]
             );
             $user->agent()->delete();
@@ -139,5 +143,41 @@ public function destroy($id)
         return redirect()->back()->with('success', 'Role assigned successfully.');
     }
 
+
+// Assign permissions to roles
+
+  public function showAssignPermissionsForm()
+    {
+        $roles = Role::all();
+        $permissions = Permission::all();
+        return view('admin.roles.assign_permissions', compact('roles', 'permissions'));
+    }
+
+public function assignPermissions(Request $request)
+{
+    $request->validate([
+        'role_id' => 'required|exists:roles,id',
+        'permissions' => 'array',
+    ]);
+
+    $role = Role::findOrFail($request->role_id);
+    $role->syncPermissions($request->permissions ?? []);
+
+    return redirect()->route('roles.assign.permissions.form')->with('success', 'Permissions updated successfully.');
+}
+
+public function togglePermission(Request $request)
+{
+    $role = Role::findOrFail($request->role_id);
+    $permission = Permission::findOrFail($request->permission_id);
+
+    if ($role->hasPermissionTo($permission)) {
+        $role->revokePermissionTo($permission);
+        return response()->json(['status' => 'removed']);
+    } else {
+        $role->givePermissionTo($permission);
+        return response()->json(['status' => 'added']);
+    }
+}
 
 }

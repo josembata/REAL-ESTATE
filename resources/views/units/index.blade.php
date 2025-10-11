@@ -18,7 +18,6 @@
                     <th class="p-3 text-left">Unit Name</th>
                     <th class="p-3 text-left">Property</th>
                     <th class="p-3 text-left">Type</th>
-                    <th class="p-3 text-left">Price</th>
                     <th class="p-3 text-left">Status</th>
                     <th class="p-3 text-center">Actions</th>
                 </tr>
@@ -29,7 +28,7 @@
                         <td class="p-3">{{ $unit->unit_name }}</td>
                         <td class="p-3">{{ $unit->property->name }}</td>
                         <td class="p-3">{{ ucfirst($unit->unit_type) }}</td>
-                        <td class="p-3">{{ $unit->price }} {{ $unit->currency }}</td>
+                        
                         <td class="p-3">
                           <span class="px-2 py-1 rounded text-white 
                      {{ $unit->status === 'available' 

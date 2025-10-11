@@ -10,11 +10,13 @@
                         class="pl-10 pr-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent">
                     <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
                 </div>
+                @can('create-properties')
                 <a href="{{ route('properties.create') }}"
                    class="bg-blue-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition duration-200">
                     <i class="fas fa-plus"></i>
                     <span>Add Property</span>
                 </a>
+                @endcan
             </div>
         </div>
     </x-slot>
@@ -127,7 +129,7 @@
                         </div>
                     @endif
 
-                    <div class="absolute top-4 left-4">
+                    <div >
                         @if($property->status === 'active')
                             <span class="status-badge bg-green-500 text-white">Active</span>
                         @elseif($property->status === 'pending')
@@ -139,12 +141,6 @@
                         @endif
                     </div>
 
-                    <div class="absolute top-4 right-4">
-                        <button class="p-2 bg-white rounded-full shadow-md favorite-btn"
-                            data-id="{{ $property->id }}">
-                            <i class="far fa-heart text-gray-600"></i>
-                        </button>
-                    </div>
                 </div>
 
                 <div class="p-5">
@@ -153,17 +149,24 @@
                         <i class="fas fa-map-marker-alt text-primary-500 mr-2"></i>
                         {{ $property->city }}, {{ $property->region }}
                     </p>
+                  <p class="text-gray-500 mb-4">
+    <i class="fas fa-user-tie text-primary-500 mr-2"></i>Agent:
+    {{ optional($property->agent)->name ?? 'Not Assigned' }}
+</p>
+
 
                     <div class="flex justify-between items-center border-t border-gray-100 pt-4">
                         <div class="flex space-x-2">
                             <a href="{{ route('properties.show', $property->id) }}"
-                               class="action-btn bg-primary-50 text-primary-600 p-2 rounded-lg">
+                                class="bg-green-500 hover:bg-green-700 text-white px-3 py-1 rounded">
                                 <i class="fas fa-eye">show</i>
                             </a>
+                            @can('edit-properties')
                             <a href="{{ route('properties.edit', $property->id) }}"
                                class="action-btn bg-blue-50 text-blue-600 p-2 rounded-lg">
                                 <i class="fas fa-edit">edit</i>
                             </a>
+                            @endcan
 
                               @auth
                         <a href="{{ route('inquiries.create', $property->id) }}"
@@ -182,15 +185,19 @@
            title="Assign Amenities">
             <i class="fas fa-plus-circle">Assign Amenities</i>
         </a>
-                            <form action="{{ route('properties.destroy', $property->id) }}" method="POST"
-                                class="inline-block">
-                                @csrf
-                                @method('DELETE')
-                                <button type="button" onclick="confirmDelete({{ $property->id }})"
-                                    class="action-btn bg-red-50 text-black-600 p-2 rounded-lg">
-                                    <i class="fas fa-trash">Delete</i>
-                                </button>
-                            </form>
+          
+     <form action="{{ route('properties.destroy', $property->id) }}" method="POST" class="inline-block">
+    @csrf
+    @method('DELETE')
+    @can('delete-properties')
+    <button type="submit"
+        onclick="return confirm('Are you sure you want to delete this property?')"
+        class="px-3 py-1 bg-red-600 text-white text-sm rounded hover:bg-blue-700">
+        <i class="fas fa-trash"></i> Delete
+    </button>
+    @endcan
+</form>
+
                         </div>
                         <span class="text-xs text-gray-400 time-ago"
                               data-created-at="{{ $property->created_at }}"></span>

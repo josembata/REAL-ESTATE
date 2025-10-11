@@ -53,6 +53,10 @@
 
         <label class="block mb-2">Address</label>
         <input type="text" name="address" class="w-full border px-3 py-2 rounded mb-2">
+        <label class="block mb-2">Tax ID</label>
+        <input type="text" name="tax_id" class="w-full border px-3 py-2 rounded mb-2">
+        <label class="block mb-2">Bank Account</label>
+        <input type="text" name="bank_account" class="w-full border px-3 py-2 rounded mb-2">
     </div>
 
     <!--  Additional fields for Staff  -->
