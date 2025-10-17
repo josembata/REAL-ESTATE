@@ -18,7 +18,6 @@ class Room extends Model
         'room_name',
         'room_type',
         'size_sqft',
-        'price',
         'availability_status',
     ];
 

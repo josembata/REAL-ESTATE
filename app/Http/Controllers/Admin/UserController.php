@@ -12,9 +12,7 @@ class UserController extends Controller
     public function index()
     {
         // Exclude Admin users using Spatie roles
-        $users = User::whereDoesntHave('roles', function ($query) {
-            $query->where('name', 'Admin');
-        })->get();
+        $users = User::all();
 
         return view('admin.users.index', compact('users'));
     }

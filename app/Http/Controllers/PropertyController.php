@@ -62,6 +62,13 @@ public function index()
 
     return view('properties.index', compact('properties'));
 }
+public function viewUnits(Property $property)
+{
+    // Eager load units
+    $units = $property->units()->paginate(10);
+
+    return view('properties.units', compact('property', 'units'));
+}
 
 
 
@@ -76,6 +83,7 @@ public function store(Request $request)
 {
     $validated = $request->validate([
         'name' => 'required|string|max:150',
+        'status' => 'required|in:for rent,for sale',
         'title_deed_number' => 'nullable|string|max:100',
         'agent_user_id' => 'nullable|exists:users,id',
         'description' => 'nullable|string',
@@ -127,11 +135,11 @@ public function edit(Property $property)
     {
         $validated = $request->validate([
             'name' => 'required|string|max:150',
+            'status' => 'required|in:for rent,for sale',
             'title_deed_number' => 'nullable|string|max:100',
              'agent_user_id' => 'nullable|exists:users,id',
             'description' => 'nullable|string',
             'type' => 'required|in:house,apartment,land,office',
-            'status' => 'required|in:active,pending,archived',
             'city' => 'required|string|max:100',
             'region' => 'required|string|max:100',
             'address' => 'required|string|max:255',

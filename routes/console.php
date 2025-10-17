@@ -10,8 +10,14 @@ Artisan::command('inspire', function () {
 
 
 
-Schedule::command('leases:send-reminders')->dailyAt('15:10')->timezone('Africa/Dar_es_Salaam');
+Schedule::command('leases:send-reminders')->dailyAt('15:42')->timezone('Africa/Dar_es_Salaam');
 // Schedule::command('leases:send-reminders')->everyMinute();
+
+// Schedule::command('bookings:release-expired')->everyTenMinutes();
+
+// Schedule::command('bookings:cancel-expired')->everyMinute();
+
+  Schedule::command('leases:update-expired')->dailyAt('00:10');
 
 
 

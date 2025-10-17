@@ -185,6 +185,12 @@
            title="Assign Amenities">
             <i class="fas fa-plus-circle">Assign Amenities</i>
         </a>
+          <!-- New button: View Available Units -->
+    <a href="{{ route('properties.viewUnits', $property->id) }}" 
+   class="bg-blue-600 text-white px-3 py-1 rounded-md shadow">
+   View Available Units
+</a>
+
           
      <form action="{{ route('properties.destroy', $property->id) }}" method="POST" class="inline-block">
     @csrf

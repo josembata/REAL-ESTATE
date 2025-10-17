@@ -22,6 +22,7 @@ class Booking extends Model
         'status',
         'payment_status',
         'cancelled_at',
+        'expires_at',
     ];
 
     protected static function booted()
@@ -97,7 +98,10 @@ public function transaction()
     return $this->hasOne(Transaction::class); 
 }
 
-
+public function lease()
+{
+    return $this->hasOne(Lease::class);
+}
 
 
 

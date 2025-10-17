@@ -27,7 +27,9 @@ class RoomController extends Controller
     $validated = $request->validate([
         'room_name' => 'required|string|max:255',
         'description' => 'nullable|string',
-        'price' => 'required|numeric',
+        // 'price' => 'required|numeric',
+        'room_type' => 'required|string',
+        'size_sqft' => 'nullable|numeric',
         'availability_status' => 'required|string|in:available,reserved,occupied',
         'images.*' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
     ]);
@@ -38,6 +40,7 @@ class RoomController extends Controller
         'room_name' => $validated['room_name'],
         'description' => $validated['description'] ?? null,
         'availability_status' => $validated['availability_status'],
+        // 'price' => $validated['price'],
         'room_type' =>$validated['room_type'],
          'size_sqft' =>$validated['size_sqft'],
     ]);

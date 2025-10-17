@@ -18,7 +18,7 @@ return new class extends Migration {
 
             $table->enum('unit_type', ['single','double','suite','office']);
             $table->enum('furnishing', ['unfurnished','partially_furnished','furnished'])->default('unfurnished');
-            $table->enum('status', ['available','booked','unavailable'])->default('unavailable');
+            $table->enum('status', ['available','booked','unavailable'])->default('available');
 
             $table->integer('size_sqft')->nullable();
             $table->boolean('furnished')->default(false);

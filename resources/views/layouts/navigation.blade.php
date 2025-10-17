@@ -88,9 +88,7 @@
                             <x-nav-link :href="route('properties.index')" :active="request()->routeIs('properties.index')">
                                 {{ __('Properties') }}
                             </x-nav-link>
-                            <x-nav-link :href="route('units.index')" :active="request()->routeIs('units.index')">
-                                {{ __('Units') }}
-                            </x-nav-link>
+                           
                             <x-nav-link :href="route('amenities.index')" :active="request()->routeIs('amenities.index')">
                                 {{ __('Amenities') }}
                             </x-nav-link>

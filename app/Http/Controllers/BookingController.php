@@ -74,28 +74,30 @@ class BookingController extends Controller
                 break;
         }
 
-        // Create booking for entire unit
-        $booking = Booking::create([
-            'unit_id' => $unit->id,
-            'property_id' => $unit->property_id,
-            'customer_id' => auth()->id(),
-            'agent_id' => $unit->property->agent_id ?? null,
-            'unit_price_plan_id' => $pricePlan->id,
-            'room_price_plan_id' => null, 
-            'check_in' => $validated['check_in'],
-            'check_out' => $validated['check_out'],
-            'total_amount' => $total,
-            'currency' => $pricePlan->currency,
-            'status' => 'pending',
-            'payment_status' => 'unpaid',
-        ]);
+     // Create booking for entire unit
+$booking = Booking::create([
+    'unit_id' => $unit->id,
+    'property_id' => $unit->property_id,
+    'customer_id' => auth()->id(),
+    'agent_id' => $unit->property->agent_id ?? null,
+    'unit_price_plan_id' => $pricePlan->id,
+    'check_in' => $validated['check_in'],
+    'check_out' => $validated['check_out'],
+    'total_amount' => $total,
+    'currency' => $pricePlan->currency,
+    'status' => 'pending',
+    'payment_status' => 'unpaid',
+    // 'expires_at' => now()->addHour(), //  1 hour hold
+     'expires_at' => now()->addMinutes(2),
+]);
 
-        // Mark the unit as booked 
-        $unit->update(['status' => 'booked']);
+// Mark the unit as unavailable
+$unit->update(['status' => 'unavailable']);
 
-          // Attach to invoice automatically
-    $invoiceController = new InvoiceController();
-    $invoiceController->addBookingToInvoice($booking);
+// Attach to invoice automatically
+$invoiceController = new InvoiceController();
+$invoiceController->addBookingToInvoice($booking);
+
 
         return redirect()->route('bookings.user')
             ->with('success', 'Booking created successfully!.');
@@ -109,6 +111,8 @@ class BookingController extends Controller
         return back()->with('success', 'Booking confirmed & unit occupied.');
     }
 
+
+
     public function cancel(Booking $booking)
     {
         $booking->update([
@@ -116,7 +120,7 @@ class BookingController extends Controller
             'cancelled_at' => now(),
         ]);
 
-        $booking->unit->update(['availability_status' => 'available']);
+        $booking->unit->update(['status' => 'available']);
 
         //remove from invoice
     $invoiceController = new InvoiceController();
@@ -134,26 +138,17 @@ class BookingController extends Controller
         return view('bookings.show', compact('booking'));
     }
 
+
+
     public function payment(Booking $booking)
 {
     return view('bookings.payment', compact('booking'));
 }
 
-public function processPayment(Request $request, Booking $booking)
-{
-    $validated = $request->validate([
-        'method' => 'required|in:mpesa,tigopesa,card',
-    ]);
 
-    
-    $booking->update([
-        'payment_status' => 'paid',
-        'status' => 'confirmed', // update booking after payment
-    ]);
 
-    return redirect()->route('bookings.show', $booking->id)
-                     ->with('success', 'Payment completed successfully!');
-}
+
+
 
 public function userBookings()
 {
@@ -181,7 +176,7 @@ public function restore(Booking $booking)
     ]);
 
     // Mark unit unavailable again
-    $booking->unit->update(['availability_status' => 'booked']);
+    $booking->unit->update(['status' => 'available']);
 
     // Add booking amount back into invoice
     $invoiceController = new InvoiceController();
@@ -189,6 +184,31 @@ public function restore(Booking $booking)
 
     return back()->with('success', 'Booking restored & added back to invoice.');
 }
+
+
+
+
+// Auto-cancel booking when countdown expires
+public function autoCancel(Booking $booking)
+{
+    if ($booking->status === 'pending' && $booking->payment_status === 'unpaid') {
+        // Cancel the booking
+        $booking->update(['status' => 'cancelled']);
+
+        // Free the unit
+        $booking->unit->update(['status' => 'available']);
+
+           //remove from invoice
+    $invoiceController = new InvoiceController();
+    $invoiceController->removeBookingFromInvoice($booking);
+
+        return response()->json(['success' => true, 'message' => 'Booking cancelled automatically']);
+    }
+
+    return response()->json(['success' => false]);
+}
+
+
 
 
 }

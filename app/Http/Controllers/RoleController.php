@@ -7,8 +7,10 @@ use App\Models\User;
 use App\Models\Agent;
 use App\Models\Landlord;
 use App\Models\Staff;
+use App\Models\PermissionCategory;
+use App\Models\Permission;
+
 use Spatie\Permission\Models\Role;
-use Spatie\Permission\Models\Permission;
 use Illuminate\Support\Facades\Auth;
 
 
@@ -16,12 +18,13 @@ class RoleController extends Controller
 {
     public function index()
     {
-        if (! Auth::user() || ! Auth::user()->hasRole('Admin')) {
-            abort(403);
-        }
+        // if (! Auth::user() || ! Auth::user()->hasRole('Admin')) {
+        //     abort(403);
+        // }
         $roles = Role::with('permissions')->get();
         $permissions = Permission::all();
-        return view('roles.index', compact('roles', 'permissions'));
+            $users = \App\Models\User::all();
+        return view('roles.index', compact('roles', 'permissions','users'));
     }
 
     public function store(Request $request)
@@ -144,40 +147,88 @@ public function destroy($id)
     }
 
 
-// Assign permissions to roles
-
-  public function showAssignPermissionsForm()
+ // Show form for assigning permissions to roles & users
+    public function showAssignPermissionsForm()
     {
-        $roles = Role::all();
-        $permissions = Permission::all();
-        return view('admin.roles.assign_permissions', compact('roles', 'permissions'));
+       $roles = Role::all();
+    $permissions = Permission::with('category')->get();
+    $categories = PermissionCategory::with('permissions')->get();
+    $users = User::orderBy('name')->get();
+    $uncategorizedPermissions = Permission::whereNull('permission_category_id')->get();
+
+    return view('admin.roles.assign_permissions', compact('roles', 'permissions', 'categories', 'users', 'uncategorizedPermissions'));
     }
 
-public function assignPermissions(Request $request)
-{
-    $request->validate([
-        'role_id' => 'required|exists:roles,id',
-        'permissions' => 'array',
-    ]);
+  // Assign permissions to either a role or a user
+    public function assignPermissions(Request $request)
+    {
+        $request->validate([
+            'permissions' => 'array',
+            'role_id' => 'nullable|exists:roles,id',
+            'user_id' => 'nullable|exists:users,id',
+        ]);
 
-    $role = Role::findOrFail($request->role_id);
-    $role->syncPermissions($request->permissions ?? []);
+        $permissions = $request->permissions ?? [];
 
-    return redirect()->route('roles.assign.permissions.form')->with('success', 'Permissions updated successfully.');
-}
+        if ($request->filled('role_id')) {
+            //  Assign to role
+            $role = Role::findOrFail($request->role_id);
+            $role->syncPermissions($permissions);
 
-public function togglePermission(Request $request)
-{
-    $role = Role::findOrFail($request->role_id);
-    $permission = Permission::findOrFail($request->permission_id);
+            return redirect()
+                ->route('roles.assign.permissions.form')
+                ->with('success', "Permissions updated for role: {$role->name}");
+        }
 
-    if ($role->hasPermissionTo($permission)) {
-        $role->revokePermissionTo($permission);
-        return response()->json(['status' => 'removed']);
-    } else {
-        $role->givePermissionTo($permission);
-        return response()->json(['status' => 'added']);
+        if ($request->filled('user_id')) {
+            //  Assign to user
+            $user = User::findOrFail($request->user_id);
+            $user->syncPermissions($permissions);
+
+            return redirect()
+                ->route('roles.assign.permissions.form')
+                ->with('success', "Permissions updated for user: {$user->name}");
+        }
+
+        return back()->with('error', 'Please select a role or user.');
     }
-}
+
+    //  Toggle permission dynamically  updates)
+    public function togglePermission(Request $request)
+    {
+        $request->validate([
+            'role_id' => 'nullable|exists:roles,id',
+            'user_id' => 'nullable|exists:users,id',
+            'permission_id' => 'required|exists:permissions,id',
+        ]);
+
+        $permission = Permission::findOrFail($request->permission_id);
+
+        // For Role toggle
+        if ($request->filled('role_id')) {
+            $role = Role::findOrFail($request->role_id);
+            if ($role->hasPermissionTo($permission)) {
+                $role->revokePermissionTo($permission);
+                return response()->json(['status' => 'removed', 'type' => 'role']);
+            } else {
+                $role->givePermissionTo($permission);
+                return response()->json(['status' => 'added', 'type' => 'role']);
+            }
+        }
+
+        // For User toggle
+        if ($request->filled('user_id')) {
+            $user = User::findOrFail($request->user_id);
+            if ($user->hasPermissionTo($permission)) {
+                $user->revokePermissionTo($permission);
+                return response()->json(['status' => 'removed', 'type' => 'user']);
+            } else {
+                $user->givePermissionTo($permission);
+                return response()->json(['status' => 'added', 'type' => 'user']);
+            }
+        }
+
+        return response()->json(['error' => 'No target found'], 422);
+    }
 
 }

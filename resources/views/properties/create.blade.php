@@ -185,7 +185,15 @@
                             </div>
                         </div>
                         <div class="mb-4">
-    <label for="agent_id" class="block text-sm font-medium text-gray-700">Assign Agent</label>
+                            <label for="status" class="block text-sm font-medium text-gray-700">Status</label>
+                            <select name="status" id="status" class="border rounded-md p-2 w-full">
+                                <option value="for rent">For Rent</option>
+                                <option value="for sale">For Sale</option>
+                            </select>
+                        </div>
+
+     <div class="mb-4">
+
 <div>
     <label for="agent_user_id" class="block text-sm font-medium text-gray-700">Assign Agent</label>
     <select name="agent_user_id" id="agent_user_id" class="border rounded-md p-2 w-full">
